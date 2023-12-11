@@ -9,24 +9,44 @@ public class PlayerMovement : MonoBehaviour
 {
     public float speed;
     public float jump;
-    public bool isJumping;
-    public bool isDucking;
+
+    private bool _isJumping;
+    private bool _isDucking;
+
+    public bool isJumping
+    {
+        get
+        {
+            return _isJumping;
+        }
+        set
+        {
+            _isJumping = value;
+            _anim.SetBool("Jumping", _isJumping);
+        }
+    }
+
+    public bool isDucking
+    {
+        get
+        {
+            return _isDucking;
+        }
+        set
+        {
+            _isDucking = value;
+            _anim.SetBool("Ducking", _isDucking);
+        }
+    }
     
     private Rigidbody2D _rb;
+    private Animator _anim;
     // Start is called before the first frame update
     void Start()
     {
+        _anim = GetComponent<Animator>();
         _rb = GetComponent<Rigidbody2D>();
-        
-        //disable gravity
-        _rb.gravityScale = 0;
-        
-        //initial position and rotation
-        transform.position = new Vector3(0, 0, 0);
-        transform.rotation = Quaternion.identity;
-        
-        //enable gravity back
-        _rb.gravityScale = 1;
+        //Set gravity scale in the Unity inspector for Rigidbody2D component
     }
 
     // Update is called once per frame
@@ -36,11 +56,9 @@ public class PlayerMovement : MonoBehaviour
         _rb.velocity = new Vector2(speed, _rb.velocity.y);
 
         //Jump function
-        if (Input.GetButtonDown("Jump")&& !isJumping)
+        if (Input.GetKeyDown("w")|| Input.GetKeyDown("up"))
         {
-            _rb.AddForce(Vector2.up * jump,ForceMode2D.Impulse);
-            isJumping = true;
-            Debug.Log("Jump");
+            Jump();
         }
         
         // Duck function
@@ -48,27 +66,28 @@ public class PlayerMovement : MonoBehaviour
         {
             Duck();
         }
-        else if (Input.GetKeyUp("s") || Input.GetKeyUp("down"))
-        {
-            StandUp();
-        }
-        // Jump function
-        if (Input.GetKey("w") || Input.GetKey("up"))
-        { 
-            Jump();
-        }
-        else if (Input.GetKeyUp("w") || Input.GetKeyUp("up"))
+        else
         {
             StandUp();
         }
     }
 
     void Duck()
-    {
+    { 
+        if (isJumping)
+        {
+            return;
+        }
+        
         isDucking = true;
     }
     void Jump()
     {
+        if (isJumping || isDucking)
+        {
+            // already jumping - no need to continue
+            return;
+        }
         _rb.AddForce(Vector2.up * jump, ForceMode2D.Impulse);
     }
     
