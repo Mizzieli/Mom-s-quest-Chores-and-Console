@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class SpawnObstacle : MonoBehaviour
 {
-    public GameObject obstacle;
+    public Transform[] spawnPoints;
+    public GameObject[] obstacles;
 
     public float maxX;
     public float minX;
@@ -25,9 +26,8 @@ public class SpawnObstacle : MonoBehaviour
 
     void Spawn()
     {
-        float randomX = Random.Range(minX, maxX);
-        float randomY = Random.Range(minY, maxY);
-
-        Instantiate(obstacle, transform.position + new Vector3(randomX, randomY, 0), transform.rotation);
+        int randomPoint = Random.Range(0, spawnPoints.Length);
+        int randomObstacle = Random.Range(0, spawnPoints.Length);
+        Instantiate(obstacles[randomObstacle], spawnPoints[randomPoint].position, transform.rotation);
     }
 }
