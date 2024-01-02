@@ -1,17 +1,9 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
     public GameManager gameManager;
 
-    // Method to start the game when the play button is pressed
-    public void PlayGame()
-    {
-        SceneManager.LoadScene("SampleScene");
-    }
-
-    // Update is called once per frame
     void Update()
     {
         // Check for arrow key press to start the game
@@ -19,5 +11,11 @@ public class MainMenu : MonoBehaviour
         {
             gameManager.StartGame();
         }
+    }
+
+    public void PlayGame()
+    {
+        Debug.Log("Play button clicked! Waiting for arrow key press to start.");
+        // Optionally, you can provide some visual feedback or instructions to the player.
     }
 }

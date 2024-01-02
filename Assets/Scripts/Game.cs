@@ -1,34 +1,54 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    private bool gameStarted = false;
+    public bool gameStarted = false;
 
-    // Update is called once per frame
+    // Assuming these are the necessary references
+    public float distanceTravelled;
+    public float bulletSpeed;
+    public float shootDistance;
+    public float cooldownTime;
+    public System.Action OnShotFired;
+
     void Update()
     {
-        // Check for arrow key press to start the game
-        if (gameStarted || (!Input.GetKeyDown(KeyCode.UpArrow) && !Input.GetKeyDown(KeyCode.DownArrow)))
-        {
-            return;
-        }
+        distanceTravelled += bulletSpeed * Time.deltaTime;
+        countdownText.text = Mathf.Ceil(cooldownTime).ToString();
 
-        StartGame();
+        if (distanceTravelled >= shootDistance && Time.time - lastShootTime >= cooldownTime)
+        {
+            Shoot();
+            lastShootTime = Time.time;
+            distanceTravelled = 0.0f;
+            OnShotFired?.Invoke();
+        }
     }
 
-    // Method to start the game
+    // Assuming these are the necessary references
+    public TextMeshProUGUI countdownText;
+    private float lastShootTime;
+
     public void StartGame()
     {
-        Debug.Log("Game started!");
-        gameStarted = true; // Set gameStarted to true to prevent multiple starts
-        // Add any additional initialization logic here
+        if (SceneManager.GetActiveScene().buildIndex == 0)
+        {
+            Debug.Log("Game started!");
+            SceneManager.LoadScene(1);
+        }
     }
 
-    // Method to handle game over conditions
     public void GameOver()
     {
         Debug.Log("Game over!");
         // Add any game over logic or transitions here
+    }
+
+    // Assuming these are the necessary references
+    private void Shoot()
+    {
+        // Implement the shooting logic here
     }
 }

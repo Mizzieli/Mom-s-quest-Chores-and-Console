@@ -136,6 +136,7 @@ GameObject:
   - component: {fileID: 31874920}
   - component: {fileID: 31874922}
   - component: {fileID: 31874923}
+  - component: {fileID: 31874924}
   m_Layer: 0
   m_Name: mother player
   m_TagString: Untagged
@@ -156,8 +157,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 2031843357}
   - {fileID: 860411508}
+  - {fileID: 2031843357}
   m_Father: {fileID: 978725683}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &31874920
@@ -276,7 +277,21 @@ MonoBehaviour:
   bulletPrefab: {fileID: 942650741432655511, guid: 88d320231e5c302468abd043d529cfe8, type: 3}
   bulletSpeed: 20
   shootDistance: 5
-  cooldownTime: 5
+  cooldownTime: 4
+  countdownText: {fileID: 827515708}
+--- !u!114 &31874924
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 31874918}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f4d3ecf57c7c0947aa6c4e4d6d2a543, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  automaticWeapon: {fileID: 31874923}
   countdownText: {fileID: 827515708}
 --- !u!1 &255919209
 GameObject:
@@ -891,7 +906,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 860411507}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -9.78, y: -5.14, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1146,7 +1161,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f48b5b14080abe4a949b9c9e70d3a16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraSpeed: 15
+  initialCameraSpeed: 6
+  maxCameraSpeed: 20
+  speedIncrementRate: 0.5
+  weapon: {fileID: 0}
   gameManager: {fileID: 978725684}
 --- !u!4 &978725683
 Transform:
@@ -1180,6 +1198,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1be9f06a1b4cb04d9be266ddd9298bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameStarted: 0
 --- !u!1 &1064071333
 GameObject:
   m_ObjectHideFlags: 0
@@ -1283,6 +1302,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f4d3ecf57c7c0947aa6c4e4d6d2a543, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  automaticWeapon: {fileID: 31874923}
   countdownText: {fileID: 827515708}
 --- !u!114 &1118575641
 MonoBehaviour:
@@ -1396,10 +1416,6 @@ MonoBehaviour:
   obstacles:
   - {fileID: 2266871483624099206, guid: b84657feec17d604ead8c398a4868043, type: 3}
   - {fileID: 2266871483624099206, guid: 3c04b079ebf702b4e9fb397292821775, type: 3}
-  maxX: 0
-  minX: 0
-  maxY: -2
-  minY: -2
   timeBetweenSpawn: 1
 --- !u!850595691 &1929897786
 LightingSettings:
