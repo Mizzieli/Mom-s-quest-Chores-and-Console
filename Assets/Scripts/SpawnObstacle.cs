@@ -1,11 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class SpawnObstacle : MonoBehaviour
 {
     public Transform[] spawnPoints;
     public GameObject[] obstacles;
+    public delegate void ObstacleSpawnedAction();
+    public static event ObstacleSpawnedAction OnObstacleSpawned;
 
     public float maxX;
     public float minX;
@@ -27,7 +27,13 @@ public class SpawnObstacle : MonoBehaviour
     void Spawn()
     {
         int randomPoint = Random.Range(0, spawnPoints.Length);
-        int randomObstacle = Random.Range(0, spawnPoints.Length);
+        int randomObstacle = Random.Range(0, obstacles.Length);
         Instantiate(obstacles[randomObstacle], spawnPoints[randomPoint].position, transform.rotation);
+
+        // Invoke the event when an obstacle is spawned
+        if (OnObstacleSpawned != null)
+        {
+            OnObstacleSpawned();
+        }
     }
 }

@@ -5,7 +5,6 @@ public class PlayerMovement : MonoBehaviour
     public float speed;
     public float jump;
 
-    private float movementSpeed = 0.0f;
     private bool _isJumping;
     private bool _isDucking;
     private bool _isSpeeding;
@@ -57,6 +56,22 @@ public class PlayerMovement : MonoBehaviour
         _anim = GetComponent<Animator>();
         _rb = GetComponent<Rigidbody2D>();
         // Set gravity scale in the Unity inspector for Rigidbody2D component
+
+        // Subscribe to the obstacle spawn event
+        SpawnObstacle.OnObstacleSpawned += OnObstacleSpawned;
+    }
+
+    // New method to respond to obstacle spawn
+    void OnObstacleSpawned()
+    {
+        // Add the code you want to execute when a new obstacle is spawned
+        Debug.Log("Obstacle spawned, do something in the player!");
+    }
+
+    void OnDestroy()
+    {
+        // Unsubscribe from the obstacle spawn event when the player is destroyed
+        SpawnObstacle.OnObstacleSpawned -= OnObstacleSpawned;
     }
 
     void Update()
