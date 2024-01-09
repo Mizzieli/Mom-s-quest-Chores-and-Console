@@ -2,33 +2,25 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public class ScoreManager : MonoBehaviour
 {
-    public static ScoreManager instance;
 
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI highscoreText;
+    private float score;
+    
+    //update is called once per frame
 
-    int score = 0;
-    int highscore = 0;
-
-    private void Awake()
+    private void Update()
     {
-        instance = this;
+        if (GameObject.FindGameObjectWithTag("Player") != null)
+        {
+            score = Time.time; // Use Time.time for testing
+            scoreText.text = ((int)score).ToString();
+        }
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        scoreText.text = score.ToString() + " POINTS";
-        highscoreText.text = "HIGHSCORE: " + highscore.ToString();
-    }
-
-    public void AddPoint()
-    {
-        score += 1;
-        scoreText.text = score.ToString() + " POINTS";
-    }
 }

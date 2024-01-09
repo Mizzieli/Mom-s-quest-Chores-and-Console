@@ -1,21 +1,13 @@
 using UnityEngine;
+using UnityEngine.SceneManagement; // Import the SceneManager class
 
 public class MainMenu : MonoBehaviour
 {
-    public GameManager gameManager;
-
-    void Update()
+    public void StartGame()
     {
-        // Check for arrow key press to start the game
-        if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            gameManager.StartGame();
-        }
-    }
-
-    public void PlayGame()
-    {
-        Debug.Log("Play button clicked! Waiting for arrow key press to start.");
-        // Optionally, you can provide some visual feedback or instructions to the player.
+        Debug.Log("StartGame method called");
+        
+        // Load the "SampleScene" when the button is clicked
+        SceneManager.LoadScene("SampleScene");
     }
 }

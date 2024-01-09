@@ -12,81 +12,57 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D _rb;
     private Animator _anim;
 
-    public bool isJumping
-    {
-        get
-        {
-            return _isJumping;
-        }
-        set
-        {
-            _isJumping = value;
-            _anim.SetBool("Jumping", _isJumping);
-        }
-    }
-
-    public bool isDucking
-    {
-        get
-        {
-            return _isDucking;
-        }
-        set
-        {
-            _isDucking = value;
-            _anim.SetBool("Ducking", _isDucking);
-        }
-    }
-
-    public bool isSpeeding
-    {
-        get
-        {
-            return _isSpeeding;
-        }
-        set
-        {
-            _isSpeeding = value;
-            _anim.SetBool("Speeding", _isSpeeding);
-        }
-    }
+    private GameManager _gameManager;
+    public static PlayerMovement Instance { get; private set; }
 
     void Start()
     {
+        _gameManager = FindObjectOfType<GameManager>();
         _anim = GetComponent<Animator>();
         _rb = GetComponent<Rigidbody2D>();
-        // Set gravity scale in the Unity inspector for Rigidbody2D component
 
-        // Subscribe to the obstacle spawn event
-        SpawnObstacle.OnObstacleSpawned += OnObstacleSpawned;
+        if (SpawnObstacle.Instance != null)
+        {
+            SpawnObstacle.OnObstacleSpawned += OnObstacleSpawned;
+        }
     }
 
-    // New method to respond to obstacle spawn
+    void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
     void OnObstacleSpawned()
     {
-        // Add the code you want to execute when a new obstacle is spawned
         Debug.Log("Obstacle spawned, do something in the player!");
     }
 
     void OnDestroy()
     {
-        // Unsubscribe from the obstacle spawn event when the player is destroyed
-        SpawnObstacle.OnObstacleSpawned -= OnObstacleSpawned;
+        if (SpawnObstacle.Instance != null)
+        {
+            SpawnObstacle.OnObstacleSpawned -= OnObstacleSpawned;
+        }
     }
 
     void Update()
     {
-        // Ensures continuous movement to the right
+        Debug.Log("Update called");
         _rb.velocity = new Vector2(speed, _rb.velocity.y);
 
-        // Jump function
-        if (Input.GetKeyDown("w") || Input.GetKeyDown("up"))
+        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
         {
             Jump();
         }
 
-        // Duck function
-        if (Input.GetKey("s") || Input.GetKey("down"))
+        if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
         {
             Duck();
         }
@@ -98,36 +74,39 @@ public class PlayerMovement : MonoBehaviour
 
     void Duck()
     {
-        if (isJumping)
+        Debug.Log("Duck called");
+        if (_isDucking || _isJumping)
         {
             return;
         }
 
-        isDucking = true;
+        // Set the velocity directly to achieve ducking
+        float duckSpeed = -10f; // Replace this value with your desired downward speed
+
+        _rb.velocity = new Vector2(_rb.velocity.x, duckSpeed);
     }
+
 
     void Jump()
     {
-        if (isJumping || isDucking)
+        if (_isJumping || _isDucking)
         {
-            // Already jumping or ducking - no need to continue
             return;
         }
+
         _rb.AddForce(Vector2.up * jump, ForceMode2D.Impulse);
     }
 
-    // Stand up function
     void StandUp()
     {
-        isDucking = false;
+        _isDucking = false;
     }
 
-    // Collider2D component for ground detection
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("ground"))
         {
-            isJumping = false;
+            _isJumping = false;
         }
     }
 
@@ -135,7 +114,19 @@ public class PlayerMovement : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("ground"))
         {
-            isJumping = true;
+            _isJumping = true;
+        }
+    }
+
+    void OnTriggerEnter2D(Collider2D col)
+    {
+        if (col.CompareTag("GoodObstacle"))
+        {
+            _gameManager.AddScore(1);
+        }
+        else if (col.CompareTag("BadObstacle"))
+        {
+            // Perform actions when a bad obstacle is triggered
         }
     }
 }
