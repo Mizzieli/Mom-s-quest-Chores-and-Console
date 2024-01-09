@@ -1,27 +1,34 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class mothercontroller : MonoBehaviour
 {
-    public Transform target; // Set this to the "PlayerMain" transform in the Inspector
-    public float moveSpeed = 5f;
-    public GameObject motherControllerObject;
+    public float speed =5f;
+    public Transform target;
+    
+    private bool _isRunning;
+    private bool _isIncreasingInSpeed;
+
+    private Animator _anim;
+    private GameManager _gameManager;
+
     void Start()
     {
-        // Disable the mothercontroller initially
-        if (motherControllerObject != null)
-        {
-            motherControllerObject.SetActive(false);
-        }
+        _gameManager = FindObjectOfType<GameManager>();
+        _anim = GetComponent<Animator>();
     }
 
-    void SomeConditionMet()
+    void Update()
     {
-        // Enable or disable the mothercontroller based on your condition
-        if (motherControllerObject != null)
+        // Check if the target (PlayerMain) is set
+        if (target != null)
         {
-            motherControllerObject.SetActive(true); // or false based on your condition
+            Debug.Log("Chaser moving towards target");
+            // Move towards the target
+            transform.position = Vector2.MoveTowards(transform.position, target.position, speed * Time.deltaTime);
+        }
+        else
+        {
+            Debug.Log("Target not set!");
         }
     }
 }

@@ -1,26 +1,21 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
 
 public class ScoreManager : MonoBehaviour
 {
-
     public TextMeshProUGUI scoreText;
-    public TextMeshProUGUI highscoreText;
-    private float score;
-    
-    //update is called once per frame
 
-    private void Update()
+    private void Start()
     {
-        if (GameObject.FindGameObjectWithTag("Player") != null)
-        {
-            score = Time.time; // Use Time.time for testing
-            scoreText.text = ((int)score).ToString();
-        }
+        // Ensure the score text is updated when the game starts
+        UpdateScore(0);
     }
 
+    // Method to update the score on the scoreboard
+    public void UpdateScore(int newScore)
+    {
+        scoreText.text = "Score: " + newScore.ToString();
+    }
 }
