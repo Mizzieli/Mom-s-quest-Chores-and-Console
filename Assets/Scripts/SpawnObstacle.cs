@@ -72,6 +72,10 @@ public class SpawnObstacle : MonoBehaviour
 
     private void Spawn()
     {
+        if (_gameManager.CurrentState != GameManager.GameState.Playing)
+        {
+            return;
+        }
         int randomPoint = Random.Range(0, spawnPoints.Length);
         int randomObstacle = Random.Range(0, obstacles.Length);
 

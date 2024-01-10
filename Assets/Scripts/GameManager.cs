@@ -5,6 +5,9 @@ using UnityEngine.Events;
 
 public class GameManager : MonoBehaviour
 {
+    public GameOverScreen GameOverScreen;
+    public int maxPlatformCount = 10;
+    
     public enum GameState
     {
         WaitingForPlayerInput,
@@ -12,6 +15,12 @@ public class GameManager : MonoBehaviour
         GameOver
     }
 
+    void Start()
+    {
+        // Set the initial state when the game starts
+        CurrentState = GameState.WaitingForPlayerInput;
+    }
+    
     public UnityAction<GameState> OnStateChanged;
     public UnityEvent<GameState> OnGameStateChanged = new UnityEvent<GameState>();
 
@@ -30,6 +39,7 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI gameOverText;
 
     private int scores;
+    private Coroutine spawnCoroutine;
 
     void Awake()
     {
@@ -45,9 +55,6 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-
-        // Initialize other GameManager properties as needed
-        // ...
 
         DontDestroyOnLoad(gameObject);
     }
@@ -77,7 +84,14 @@ public class GameManager : MonoBehaviour
     public void GameOver()
     {
         Debug.Log("Game over!");
-        // Add any game over logic or transitions here
+        GameOverScreen.Setup(scores);
+
+        CurrentState = GameState.GameOver;
+        if (spawnCoroutine != null)
+        {
+            StopCoroutine(spawnCoroutine);
+            spawnCoroutine = null;
+        }
     }
 
     public void AddScore(int pointsToAdd)
@@ -86,6 +100,7 @@ public class GameManager : MonoBehaviour
         {
             scores += pointsToAdd;
             scoreVal.text = $"{scores} POINTS";
+            Debug.Log($"Added{pointsToAdd} points.Total score: {scores}");
         }
     }
 }
