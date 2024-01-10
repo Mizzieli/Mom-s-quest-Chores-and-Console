@@ -42,6 +42,7 @@ public class SpawnObstacle : MonoBehaviour
     {
         if (newState == GameManager.GameState.Playing && spawnCoroutine == null)
         {
+            spawnTime = Time.time + timeBetweenSpawn;
             spawnCoroutine = StartCoroutine(SpawnObstaclesCoroutine());
         }
         else if (spawnCoroutine != null)
@@ -72,10 +73,6 @@ public class SpawnObstacle : MonoBehaviour
 
     private void Spawn()
     {
-        if (_gameManager.CurrentState != GameManager.GameState.Playing)
-        {
-            return;
-        }
         int randomPoint = Random.Range(0, spawnPoints.Length);
         int randomObstacle = Random.Range(0, obstacles.Length);
 
@@ -88,5 +85,18 @@ public class SpawnObstacle : MonoBehaviour
         }
 
         OnObstacleSpawned?.Invoke();
+    }
+
+    void Update()
+    {
+        if (_gameManager.CurrentState == GameManager.GameState.Playing)
+        {
+            // Check if an obstacle should be spawned immediately when pressing spacebar
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                Spawn();
+                spawnTime = Time.time + timeBetweenSpawn;
+            }
+        }
     }
 }

@@ -1,4 +1,8 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -7,115 +11,133 @@ public class PlayerMovement : MonoBehaviour
 
     private bool _isJumping;
     private bool _isDucking;
-    private bool _isSpeeding;
+    private bool canMove = false;  // Added flag to control player movement
 
+    public bool isJumping
+    {
+        get
+        {
+            return _isJumping;
+        }
+        set
+        {
+            _isJumping = value;
+            _anim.SetBool("Jumping", _isJumping);
+        }
+    }
+
+    public bool isDucking
+    {
+        get
+        {
+            return _isDucking;
+        }
+        set
+        {
+            _isDucking = value;
+            _anim.SetBool("Ducking", _isDucking);
+        }
+    }
+    
     private Rigidbody2D _rb;
     private Animator _anim;
 
-    private GameManager _gameManager;
-    public static PlayerMovement Instance { get; private set; }
-
-    private int score; // New variable to store the player's score
-
-    private ScoreManager scoreManager;
-
     void Start()
     {
-        // Find the ScoreManager script in the scene
-        scoreManager = FindObjectOfType<ScoreManager>();
+        // Assuming you have a reference to the GameManager instance
+        GameManager gameManager = FindObjectOfType<GameManager>();
 
-        // Assign the Rigidbody2D component to _rb
-        _rb = GetComponent<Rigidbody2D>();
-
-        if (SpawnObstacle.Instance != null)
+        if (gameManager != null)
         {
-            SpawnObstacle.OnObstacleSpawned += OnObstacleSpawned;
-        }
-    }
-
-
-    void Awake()
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
+            // Subscribe to the event when the game state changes to Playing
+            gameManager.OnGameStateChanged.AddListener(HandleGameStateChanged);
         }
 
         _anim = GetComponent<Animator>();
-    }
-
-    void OnObstacleSpawned()
-    {
-        Debug.Log("Obstacle spawned, do something in the player!");
-
-        // Increment the score when an obstacle is spawned
-        AddScore(1);
-    }
-
-    void OnDestroy()
-    {
-        if (SpawnObstacle.Instance != null)
-        {
-            SpawnObstacle.OnObstacleSpawned -= OnObstacleSpawned;
-        }
+        _rb = GetComponent<Rigidbody2D>();
+        // Set gravity scale in the Unity inspector for Rigidbody2D component
     }
 
     void Update()
     {
-        _rb.velocity = new Vector2(speed, _rb.velocity.y);
+        if (_anim != null && _rb != null)
+        {
+            if (!canMove)
+            {
+                // If canMove is false, make the player stand
+                StandUp();
+                return;
+            }
+        } 
 
-        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
+        if (!canMove)
+        {
+            // If canMove is false, make the player stand
+            StandUp();
+            return;
+        }
+
+        // Jump function
+        if (Input.GetKeyDown("w") || Input.GetKeyDown("up"))
         {
             Jump();
         }
 
-        if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
+        // Duck function
+        if (Input.GetKey("s") || Input.GetKey("down"))
         {
             Duck();
         }
+        else
+        {
+            StandUp();
+        }
+
+        // Movement function
+        Move();
+    }
+
+    void Move()
+    {
+        // If no movement keys are pressed, set horizontal velocity to 0
+        float horizontalInput = Input.GetAxis("Horizontal");
+        _rb.velocity = new Vector2(horizontalInput * speed, _rb.velocity.y);
     }
 
     void Duck()
-    {
-        if (_isDucking || _isJumping)
+    { 
+        if (isJumping)
         {
             return;
         }
-
-        //float duckForce = 10f;
-        _isDucking = true;
-        _anim.SetBool("Ducking", true);
         
-        Invoke("StandUp", 0.25f);
-        
-        // _rb.AddForce(Vector2.down * duckForce, ForceMode2D.Force);
+        isDucking = true;
     }
 
     void Jump()
     {
-        if (_isJumping || _isDucking)
+        if (isJumping || isDucking)
         {
             return;
         }
 
-        _rb.AddForce(Vector2.up * jump, ForceMode2D.Impulse);
+        // Apply impulse for jumping
+        _rb.velocity = new Vector2(_rb.velocity.x, 2);  // Zero out the vertical velocity before jumping
+        _rb.AddForce(_rb.velocity);
     }
 
+    // Stand up function
     void StandUp()
     {
-        _isDucking = false;
-        _anim.SetBool("Ducking", _isDucking);
+        isDucking = false;
     }
 
+    // Collider2D component for ground detection
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("ground"))
         {
-            _isJumping = false;
+            isJumping = false;
         }
     }
 
@@ -123,35 +145,16 @@ public class PlayerMovement : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("ground"))
         {
-            _isJumping = true;
+            isJumping = true;
         }
     }
 
-    void OnTriggerEnter2D(Collider2D col)
+    void HandleGameStateChanged(GameManager.GameState newState)
     {
-        Debug.Log("Trigger entered: " + col.tag);
-
-        if (col.CompareTag("GoodObstacle"))
+        // Check if the game state is set to Playing
+        if (newState == GameManager.GameState.Playing)
         {
-            AddScore(1);
+            canMove = true;  // Allow player movement
         }
-        else if (col.CompareTag("BadObstacle"))
-        {
-            // Perform actions when a bad obstacle is triggered
-        }
-    }
-
-
-    // New method to get the player's score
-    public int GetScore()
-    {
-        return score;
-    }
-
-    // New method to add to the player's score
-    public void AddScore(int pointsToAdd)
-    {
-        score += pointsToAdd;
-        scoreManager.UpdateScore(score);
     }
 }

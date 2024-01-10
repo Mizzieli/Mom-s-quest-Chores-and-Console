@@ -1,77 +1,50 @@
-using System.Collections;
 using UnityEngine;
 
 public class mothercontroller : MonoBehaviour
 {
-    public float moveSpeed = 2f;
-    public float maxHorizontalDistance = 5f;
-    public float startDelay = 5f;
+    public float speed = 5f;
+    public float amplitude = 2f;
+    public float raycastDistance = 1f; // Adjust the raycast distance based on your needs
+    public Transform target;
 
-    private bool movingRight = true;
+    private float startTime;
+    private bool canMove = false;
+
     private GameManager _gameManager;
-    private Transform target;
 
     void Start()
     {
         _gameManager = FindObjectOfType<GameManager>();
-        // Set the target to the player's position
-        target = FindObjectOfType<PlayerMovement>().transform;
-
-        // Start coroutine for delayed movement.
-        StartCoroutine(StartMovingAfterDelay());
+        startTime = Time.time;
+        _gameManager.OnGameStateChanged.AddListener(HandleGameStateChanged);
     }
 
     void Update()
     {
-        // Moves mother back and forth
-        MoveMotherPlayer();
-        CheckGameOver();
-    }
-
-    IEnumerator StartMovingAfterDelay()
-    {
-        // Wait for the specified delay before allowing movement
-        yield return new WaitForSeconds(startDelay);
-
-        // Mother in motion
-        movingRight = true;
-    }
-
-    private void MoveMotherPlayer()
-    {
-        // Move towards the player
-        float horizontalInput = movingRight ? 1f : -1f;
-        Vector3 movement = new Vector3(horizontalInput, 0f, 0f) * moveSpeed * Time.deltaTime;
-
-        transform.Translate(movement);
-
-        if (Mathf.Abs(transform.position.x - target.position.x) <= 0.5f)
+        if (canMove)
         {
-            // If the mother gets close enough to the player, game over
-            _gameManager.GameOver();
-        }
+            // Calculate the elapsed time since the start
+            float elapsedTime = Time.time - startTime;
 
-        if (Mathf.Abs(transform.position.x) >= maxHorizontalDistance)
-        {
-            // Change direction when reaching the maximum distance
-            movingRight = !movingRight;
+            // Oscillate the position on the x-axis using a sine wave
+            float newX = Mathf.Sin(elapsedTime * speed) * amplitude;
+
+            // Cast a ray to check for obstacles in the path
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.right * Mathf.Sign(newX), raycastDistance);
+
+            if (hit.collider == null || hit.collider.CompareTag("Player"))
+            {
+                // Move towards the target on the y-axis
+                transform.position = new Vector2(newX, target.position.y);
+            }
         }
     }
 
-    private void CheckGameOver()
+    void HandleGameStateChanged(GameManager.GameState newState)
     {
-        if (transform.position.y <= 0f)
+        if (newState == GameManager.GameState.Playing)
         {
-            _gameManager.GameOver();
+            canMove = true;
         }
     }
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            // Game over logic (e.g., call _gameManager.GameOver())
-            _gameManager.GameOver();
-        }
-    }
-
 }

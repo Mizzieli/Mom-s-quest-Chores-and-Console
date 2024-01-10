@@ -7,7 +7,7 @@ public class randomisedObstaclesGood : MonoBehaviour
 
     void OnMouseDown()
     {
-        // Increase points by calling AddScore with the specified value
+        // Access the ScoreManager instance and call PlayerHitGoodObstacle
         GameManager.Instance.AddScore(pointsToAdd);
 
         // Instantiate pop effect
@@ -15,5 +15,22 @@ public class randomisedObstaclesGood : MonoBehaviour
 
         // Destroy the good obstacle
         Destroy(gameObject);
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        // Check if the colliding object has the "Player" tag
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            // Get the ScoreManager and call the AddScoreOnCollision method
+            ScoreManager scoreManager = FindObjectOfType<ScoreManager>();
+            if (scoreManager != null)
+            {
+                scoreManager.AddScoreOnCollision();
+            }
+
+            // Optionally, destroy the good object upon collision
+            Destroy(gameObject);
+        }
     }
 }

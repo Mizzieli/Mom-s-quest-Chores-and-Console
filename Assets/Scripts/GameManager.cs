@@ -5,9 +5,6 @@ using UnityEngine.Events;
 
 public class GameManager : MonoBehaviour
 {
-    public GameOverScreen GameOverScreen;
-    public int maxPlatformCount = 10;
-    
     public enum GameState
     {
         WaitingForPlayerInput,
@@ -15,17 +12,12 @@ public class GameManager : MonoBehaviour
         GameOver
     }
 
-    void Start()
-    {
-        // Set the initial state when the game starts
-        CurrentState = GameState.WaitingForPlayerInput;
-    }
-    
     public UnityAction<GameState> OnStateChanged;
     public UnityEvent<GameState> OnGameStateChanged = new UnityEvent<GameState>();
 
     public static GameManager Instance { get; private set; }
-
+    
+    
     private GameState currentState = GameState.WaitingForPlayerInput;
     public event Action OnObstacleSpawned;
     
@@ -39,8 +31,26 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI gameOverText;
 
     private int scores;
-    private Coroutine spawnCoroutine;
+    private bool _spaceBarPressed;
+    private ScoreManager scoreManager;
 
+    // ... other GameManager code ...
+
+    public bool SpaceBarPressed
+    {
+        get { return _spaceBarPressed; }
+    }
+
+    void Start()
+    {
+        scoreManager = FindObjectOfType<ScoreManager>();
+
+        if (scoreManager == null)
+        {
+            Debug.LogError("ScoreManager not found in the scene!");
+        }
+    }
+    
     void Awake()
     {
         // Ensure there is only one instance of GameManager
@@ -55,6 +65,9 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+
+        // Initialize other GameManager properties as needed
+        // ...
 
         DontDestroyOnLoad(gameObject);
     }
@@ -76,23 +89,25 @@ public class GameManager : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                CurrentState = GameState.Playing;
+                StartGame(); // You can define a custom method for starting the game
             }
         }
+    }
+    void StartGame()
+    {
+        // Your logic to initialize the game state
+        CurrentState = GameState.Playing;
     }
 
     public void GameOver()
     {
         Debug.Log("Game over!");
-        GameOverScreen.Setup(scores);
 
-        CurrentState = GameState.GameOver;
-        if (spawnCoroutine != null)
-        {
-            StopCoroutine(spawnCoroutine);
-            spawnCoroutine = null;
-        }
+        // Add your game over logic here
+        gameOverText.text = "Game Over!";
+        endScoresVal.text = $"Final Score: {scores}";
     }
+
 
     public void AddScore(int pointsToAdd)
     {
@@ -100,7 +115,14 @@ public class GameManager : MonoBehaviour
         {
             scores += pointsToAdd;
             scoreVal.text = $"{scores} POINTS";
-            Debug.Log($"Added{pointsToAdd} points.Total score: {scores}");
+        }
+    }
+    // Example method that adds score when a specific game event occurs
+    public void HandleGameEvent()
+    {
+        if (scoreManager != null)
+        {
+           // scoreManager.AddScore(1); // Add 10 points to the score
         }
     }
 }
