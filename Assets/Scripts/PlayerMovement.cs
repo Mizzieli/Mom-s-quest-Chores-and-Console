@@ -1,18 +1,22 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 
 public class PlayerMovement : MonoBehaviour
 {
     public float speed;
-    public float jump;
+    public float jumpForce=5000f;
+    public LayerMask groundLayer;
+    public float groundCheckRadius = 0.2f;
+
+    public Transform groundCheck;
 
     private bool _isJumping;
     private bool _isDucking;
     private bool canMove = false;  // Added flag to control player movement
-
+    private Rigidbody2D rb;
+    private bool isGrounded;
+    private Animator _anim;
+    private float originalColliderHeight;
+    
     public bool isJumping
     {
         get
@@ -38,9 +42,7 @@ public class PlayerMovement : MonoBehaviour
             _anim.SetBool("Ducking", _isDucking);
         }
     }
-    
-    private Rigidbody2D _rb;
-    private Animator _anim;
+
 
     void Start()
     {
@@ -54,22 +56,18 @@ public class PlayerMovement : MonoBehaviour
         }
 
         _anim = GetComponent<Animator>();
-        _rb = GetComponent<Rigidbody2D>();
+        rb = GetComponent<Rigidbody2D>();
         // Set gravity scale in the Unity inspector for Rigidbody2D component
+        BoxCollider2D collider = GetComponent<BoxCollider2D>();
+        if (collider != null)
+        {
+            originalColliderHeight = collider.size.y;
+        }
     }
-
+    
     void Update()
     {
-        if (_anim != null && _rb != null)
-        {
-            if (!canMove)
-            {
-                // If canMove is false, make the player stand
-                StandUp();
-                return;
-            }
-        } 
-
+        
         if (!canMove)
         {
             // If canMove is false, make the player stand
@@ -77,14 +75,8 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
-        // Jump function
-        if (Input.GetKeyDown("w") || Input.GetKeyDown("up"))
-        {
-            Jump();
-        }
-
         // Duck function
-        if (Input.GetKey("s") || Input.GetKey("down"))
+        if (Input.GetKeyDown(KeyCode.DownArrow))
         {
             Duck();
         }
@@ -93,43 +85,45 @@ public class PlayerMovement : MonoBehaviour
             StandUp();
         }
 
-        // Movement function
-        Move();
-    }
-
-    void Move()
-    {
-        // If no movement keys are pressed, set horizontal velocity to 0
-        float horizontalInput = Input.GetAxis("Horizontal");
-        _rb.velocity = new Vector2(horizontalInput * speed, _rb.velocity.y);
-    }
-
-    void Duck()
-    { 
-        if (isJumping)
+        isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
+        if (isGrounded && Input.GetKeyDown(KeyCode.Space))
         {
-            return;
+            Jump();
         }
-        
-        isDucking = true;
     }
 
     void Jump()
     {
-        if (isJumping || isDucking)
+        rb.velocity = new Vector2(rb.velocity.x, 0f);
+        rb.AddForce(Vector2.up * jumpForce,ForceMode2D.Impulse);
+    }
+    
+    void Duck()
+    {
+        if (isJumping)
         {
             return;
         }
 
-        // Apply impulse for jumping
-        _rb.velocity = new Vector2(_rb.velocity.x, 2);  // Zero out the vertical velocity before jumping
-        _rb.AddForce(_rb.velocity);
+        isDucking = true;
+        
+        //adjusting the players collider or animation for ducking
+        BoxCollider2D collider = GetComponent<BoxCollider2D>();
+        if (collider != null)
+        {
+            collider.size = new Vector2(collider.size.x, originalColliderHeight * 0.5f);
+        }
     }
-
     // Stand up function
     void StandUp()
     {
         isDucking = false;
+        //Restore the original collider height when standing up
+        BoxCollider2D collider = GetComponent<BoxCollider2D>();
+        if (collider != null)
+        {
+            collider.size = new Vector2(collider.size.x, originalColliderHeight);
+        }
     }
 
     // Collider2D component for ground detection
