@@ -87,20 +87,38 @@ public class GameManager : MonoBehaviour
                 StartGame(); 
             }
         }
+        else if (CurrentState == GameState.GameOver)
+        {
+            
+            gameOverCanvas.gameObject.SetActive(true);
+        }
     }
     void StartGame()
     {
         CurrentState = GameState.Playing;
     }
 
-    public void GameOver()
+    public void GameOverScreen()
     {
         Debug.Log("Game over!");
 
-        // Add your game over logic here
         gameOverText.text = "Game Over!";
         endScoresVal.text = $"Final Score: {scores}";
+    
+        // Ensure the ScoreManager is updated with the final score
+        if (scoreManager != null)
+        {
+            scoreManager.UpdateScore(scores);
+        }
+    
+        CurrentState = GameState.GameOver;
+
+        if (gameOverCanvas != null)
+        {
+            gameOverCanvas.gameObject.SetActive(true);
+        }
     }
+
 
 
     public void AddScore(int pointsToAdd)
@@ -111,14 +129,12 @@ public class GameManager : MonoBehaviour
             scoreVal.text = $"{scores} POINTS";
         }
     }
+
     public void HandleGameEvent()
     {
         if (scoreManager != null)
         {
         }
     }
-    public void GameOverScreen()
-    {
-        gameOverCanvas.gameObject.SetActive(true);
-    }
+
 }

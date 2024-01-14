@@ -8,6 +8,7 @@ TagManager:
   - motherPlayer
   - GoodObstacle
   - BadObstacle
+  - GameOver
   layers:
   - Default
   - TransparentFX
