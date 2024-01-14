@@ -4,7 +4,7 @@ public class mothercontroller : MonoBehaviour
 {
     public float speed = 5f;
     public float amplitude = 2f;
-    public float raycastDistance = 1f; // Adjust the raycast distance based on your needs
+    public float raycastDistance = 1f; 
     public Transform target;
 
     private float startTime;

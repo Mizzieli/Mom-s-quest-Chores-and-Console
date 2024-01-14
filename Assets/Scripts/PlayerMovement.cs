@@ -46,7 +46,6 @@ public class PlayerMovement : MonoBehaviour
 
     void Start()
     {
-        // Assuming you have a reference to the GameManager instance
         GameManager gameManager = FindObjectOfType<GameManager>();
 
         if (gameManager != null)
