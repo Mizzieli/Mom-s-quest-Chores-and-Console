@@ -16,7 +16,7 @@ public class GameManager : MonoBehaviour
     public UnityEvent<GameState> OnGameStateChanged = new UnityEvent<GameState>();
 
     public static GameManager Instance { get; private set; }
-    
+    public Canvas gameOverCanvas;
     
     private GameState currentState = GameState.WaitingForPlayerInput;
     public event Action OnObstacleSpawned;
@@ -34,7 +34,6 @@ public class GameManager : MonoBehaviour
     private bool _spaceBarPressed;
     private ScoreManager scoreManager;
 
-    // ... other GameManager code ...
 
     public bool SpaceBarPressed
     {
@@ -53,7 +52,6 @@ public class GameManager : MonoBehaviour
     
     void Awake()
     {
-        // Ensure there is only one instance of GameManager
         if (Instance == null)
         {
             Instance = this;
@@ -65,9 +63,6 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-
-        // Initialize other GameManager properties as needed
-        // ...
 
         DontDestroyOnLoad(gameObject);
     }
@@ -89,13 +84,12 @@ public class GameManager : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                StartGame(); // You can define a custom method for starting the game
+                StartGame(); 
             }
         }
     }
     void StartGame()
     {
-        // Your logic to initialize the game state
         CurrentState = GameState.Playing;
     }
 
@@ -117,12 +111,14 @@ public class GameManager : MonoBehaviour
             scoreVal.text = $"{scores} POINTS";
         }
     }
-    // Example method that adds score when a specific game event occurs
     public void HandleGameEvent()
     {
         if (scoreManager != null)
         {
-           // scoreManager.AddScore(1); // Add 10 points to the score
         }
+    }
+    public void GameOverScreen()
+    {
+        gameOverCanvas.gameObject.SetActive(true);
     }
 }

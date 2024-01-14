@@ -14,7 +14,6 @@ public class ScoreManager : MonoBehaviour
 
     public void AddScoreOnCollision()
     {
-        // Increase the score by the desired amount (e.g., 10 points)
         AddScore(10);
     }
     // Method to add points to the score
