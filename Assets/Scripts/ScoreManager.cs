@@ -9,16 +9,14 @@ public class ScoreManager : MonoBehaviour
 {
    [SerializeField] private TextMeshProUGUI scoreText;
     private Scores scoreData = new Scores();
+    
     private void Start()
     {
         // Ensure the score text is updated when the game starts
+        scoreData = SaveData.Load();
         scoreData.score = 0;
         
-        
         UpdateScoreText();
-        scoreData = SaveData.Load();
-        AddScore(0);
-
     }   
 
     public int GetScore()
@@ -26,10 +24,6 @@ public class ScoreManager : MonoBehaviour
         return scoreData.score;
     }
 
-    public void AddScoreOnCollision()
-    {
-        AddScore(10);
-    }
     // Method to add points to the score
     public void AddScore(int points)
     {
@@ -50,13 +44,6 @@ public class ScoreManager : MonoBehaviour
         {
             scoreText.text = "Score: " + scoreData.score + "\nHigh Score: " + scoreData.highScore;;
         }
-    }
-
-    // Public method to update the score externally
-    public void UpdateScore(int newScore)
-    {
-        scoreData.score = newScore;
-        UpdateScoreText();
     }
 
     private void OnDestroy()

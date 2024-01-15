@@ -26,7 +26,7 @@ public class randomisedObstaclesGood : MonoBehaviour
             ScoreManager scoreManager = FindObjectOfType<ScoreManager>();
             if (scoreManager != null)
             {
-                scoreManager.AddScoreOnCollision();
+                scoreManager.AddScore(10);
             }
 
             // Optionally, destroy the good object upon collision

@@ -34,6 +34,8 @@ public class GameManager : MonoBehaviour
     private bool _spaceBarPressed;
     private ScoreManager scoreManager;
 
+    public ScoreManager updatedScore;
+
 
     public bool SpaceBarPressed
     {
@@ -104,12 +106,6 @@ public class GameManager : MonoBehaviour
 
         gameOverText.text = "Game Over!";
         endScoresVal.text = $"Final Score: {scores}";
-    
-        // Ensure the ScoreManager is updated with the final score
-        if (scoreManager != null)
-        {
-            scoreManager.UpdateScore(scores);
-        }
     
         CurrentState = GameState.GameOver;
 

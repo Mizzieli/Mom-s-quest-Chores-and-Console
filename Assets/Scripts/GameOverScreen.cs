@@ -8,12 +8,11 @@ using UnityEngine.SceneManagement;
 public class GameOverScreen : MonoBehaviour
 {
     public TextMeshProUGUI pointsText;
-    
-    public void Show()
+
+    public void OnEnable()
     {
-        ScoreManager score = FindObjectOfType<ScoreManager>();
-        gameObject.SetActive(true);
-        pointsText.text = score.GetScore() + "POINTS";
+        ScoreManager scoreData = FindObjectOfType<ScoreManager>();
+        pointsText.text = scoreData.GetScore() + "POINTS";
     }
 
     public void RestartButton()
@@ -26,5 +25,6 @@ public class GameOverScreen : MonoBehaviour
         SceneManager.LoadScene("MainMenu");
  
     }
+     
     
 }
