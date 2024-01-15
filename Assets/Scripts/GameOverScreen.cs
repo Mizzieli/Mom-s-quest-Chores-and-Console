@@ -9,10 +9,11 @@ public class GameOverScreen : MonoBehaviour
 {
     public TextMeshProUGUI pointsText;
     
-    public void Setup(int score)
+    public void Show()
     {
+        ScoreManager score = FindObjectOfType<ScoreManager>();
         gameObject.SetActive(true);
-        pointsText.text = score.ToString() + "POINTS";
+        pointsText.text = score.GetScore() + "POINTS";
     }
 
     public void RestartButton()
