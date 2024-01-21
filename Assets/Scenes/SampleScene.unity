@@ -435,7 +435,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93c9d3f08d22edc43a8cd5812473fde9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pointsText: {fileID: 0}
+  pointsText: {fileID: 2133242606}
 --- !u!114 &145386029
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -751,7 +751,7 @@ CircleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -1299,7 +1299,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1574580856f414c49bf8e5515ec19aee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scoreText: {fileID: 466091004}
+  scoreText: {fileID: 2133242606}
 --- !u!114 &562221425
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1642,10 +1642,10 @@ MonoBehaviour:
   spawnTime: 1
   timeBetweenSpawn: 10
   scoreVal: {fileID: 466091004}
-  endScoresVal: {fileID: 466091004}
+  endScoresVal: {fileID: 2133242606}
   inScoreText: {fileID: 466091004}
-  gameOverText: {fileID: 466091004}
-  updatedScore: {fileID: 562221424}
+  gameOverText: {fileID: 2133242606}
+  updatedScore: {fileID: 1118575643}
 --- !u!1 &1064071333
 GameObject:
   m_ObjectHideFlags: 0
@@ -1894,8 +1894,10 @@ MonoBehaviour:
   - {fileID: 436301006}
   - {fileID: 1064071334}
   obstacles:
-  - {fileID: 2266871483624099206, guid: b84657feec17d604ead8c398a4868043, type: 3}
-  - {fileID: 2266871483624099206, guid: 3c04b079ebf702b4e9fb397292821775, type: 3}
+  - {fileID: 2401399771506696119, guid: 1c488d9d4e9abc94f938576cb5a84f76, type: 3}
+  - {fileID: 7521916940281304094, guid: 532daafe2b70da34aa8abdbee68a8dfb, type: 3}
+  - {fileID: 4893206408913045372, guid: 3f55a284e1fa00c49908297743e91034, type: 3}
+  - {fileID: 8579342482893703055, guid: eeb4f84ce3246f745ae434ee9bdccd52, type: 3}
   timeBetweenSpawn: 1
   initialObstacleSpeed: 10
   maxObstacleSpeed: 50
@@ -2136,8 +2138,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 0}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4

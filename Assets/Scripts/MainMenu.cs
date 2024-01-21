@@ -10,4 +10,5 @@ public class MainMenu : MonoBehaviour
         // Load the "SampleScene" when the button is clicked
         SceneManager.LoadScene("SampleScene");
     }
+    
 }
