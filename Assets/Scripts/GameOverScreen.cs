@@ -8,11 +8,22 @@ using UnityEngine.SceneManagement;
 public class GameOverScreen : MonoBehaviour
 {
     public TextMeshProUGUI pointsText;
+    AudioManager audioManager;
 
+    private void Awake()
+    {
+        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+    }
+    
     public void OnEnable()
     {
         ScoreManager scoreData = FindObjectOfType<ScoreManager>();
         pointsText.text = scoreData.GetScore() + "POINTS";
+        
+        if (audioManager != null)
+        {
+            audioManager.PlaySFX(audioManager.gameOver);
+        }
     }
 
     public void RestartButton()

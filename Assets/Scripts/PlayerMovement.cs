@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -16,7 +17,14 @@ public class PlayerMovement : MonoBehaviour
     private bool isGrounded;
     private Animator _anim;
     private float originalColliderHeight;
-    
+
+    AudioManager audioManager;
+
+    private void Awake()
+    {
+        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+    }
+
     public bool isJumping
     {
         get
@@ -95,6 +103,8 @@ public class PlayerMovement : MonoBehaviour
     {
         rb.velocity = new Vector2(rb.velocity.x, 0f);
         rb.AddForce(Vector2.up * jumpForce,ForceMode2D.Impulse);
+        
+        audioManager.PlaySFX(audioManager.jump);
     }
     
     void Duck()
@@ -149,5 +159,13 @@ public class PlayerMovement : MonoBehaviour
         {
             canMove = true;  // Allow player movement
         }
+        
+        else if (newState == GameManager.GameState.GameOver)
+        {
+            canMove = false;  // Prevent player movement
+            // Play game over sound
+            audioManager.PlayGameOver();
+        }
+
     }
 }

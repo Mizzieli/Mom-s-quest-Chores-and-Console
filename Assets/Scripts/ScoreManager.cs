@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using TMPro;
 using Unity.VisualScripting;
@@ -8,6 +9,8 @@ using UnityEngine.UI;
 public class ScoreManager : MonoBehaviour
 {
    [SerializeField] private TextMeshProUGUI scoreText;
+   [SerializeField] private TextMeshProUGUI scoreIncreaseText;
+   
     private Scores scoreData = new Scores();
     
     private void Start()
@@ -44,6 +47,21 @@ public class ScoreManager : MonoBehaviour
         {
             scoreText.text = "Score: " + scoreData.score + "\nHigh Score: " + scoreData.highScore;;
         }
+    }
+    void DisplayScoreIncreaseText(int points)
+    {
+        if (scoreIncreaseText != null)
+        {
+            // Show the increase in score temporarily
+            scoreIncreaseText.text = "+" + points;
+            StartCoroutine(HideScoreIncreaseText());
+        }
+    }
+
+    IEnumerator HideScoreIncreaseText()
+    {
+        yield return new WaitForSeconds(1.5f);  // Adjust the delay as needed
+        scoreIncreaseText.text = "";  // Hide the score increase text
     }
 
     private void OnDestroy()
