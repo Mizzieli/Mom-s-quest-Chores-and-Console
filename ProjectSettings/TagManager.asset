@@ -9,6 +9,7 @@ TagManager:
   - GoodObstacle
   - BadObstacle
   - GameOver
+  - Audio
   layers:
   - Default
   - TransparentFX
